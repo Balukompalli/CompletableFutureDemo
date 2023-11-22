@@ -2,6 +2,7 @@ package com.multithread.CompletableFutureDemo.controller;
 
 import com.multithread.CompletableFutureDemo.entity.User;
 import com.multithread.CompletableFutureDemo.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -37,4 +39,13 @@ public class UserController {
         return userService.findAllUsers().thenApply(ResponseEntity::ok);
     }
 
+    @GetMapping(value = "/getUsersByThread", produces = "application/json")
+    public ResponseEntity getUsers() {
+        CompletableFuture<List<User>> userList1 = userService.findAllUsers();
+        CompletableFuture<List<User>> userList2 = userService.findAllUsers();
+        CompletableFuture<List<User>> userList3 = userService.findAllUsers();
+
+CompletableFuture.allOf(userList1,userList2,userList3).join();
+return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
